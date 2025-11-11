@@ -1,0 +1,13 @@
+[project]
+name = "gemini-paddle-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.121.1",
+    "google-genai>=1.49.0",
+    "paddleocr>=3.3.1",
+    "paddlepaddle>=3.2.1",
+    "python-dotenv>=1.2.1",
+]
