@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException
-from src.gemini_func.gem_func import gen_content
+from functions.gemini_func.gem_func import gen_content
 
 
 router = APIRouter(tags=["Gemini"])

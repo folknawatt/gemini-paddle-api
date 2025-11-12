@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Request, HTTPException
-from src.ocr_func.paddle_func import paddle_ocr
+from functions.ocr_func.paddle_func import paddle_ocr
 
 
 router = APIRouter(tags=["OCR"])
 
 
-@router.post("/ocr")
+@router.post("/pddocr")
 async def ocr(request: Request):
     try:
         input_data = await request.json()
@@ -15,7 +15,6 @@ async def ocr(request: Request):
         img_path = input_data.get("img_path")
 
         paddle_ocr(img_path)
-
         return {"answer": "success"}
 
     except Exception as e:

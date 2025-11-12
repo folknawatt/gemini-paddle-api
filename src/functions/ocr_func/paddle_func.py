@@ -1,8 +1,5 @@
 from paddleocr import PaddleOCR
 
-img_path = r"D:\gemini-paddle-api\picture\thai_id_card_front_bunyang.png"
-
-
 def paddle_ocr(img_path):
 
     ocr = PaddleOCR(
@@ -22,6 +19,3 @@ def paddle_ocr(img_path):
         res.save_to_img("output")
         res.save_to_json("output")
 
-
-if __name__ == "__main__":
-    paddle_ocr(img_path)
