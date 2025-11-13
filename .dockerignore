@@ -1,0 +1,26 @@
+# ไฟล์ .dockerignore
+
+# Virtual Env
+.venv
+
+# Git
+.git
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+
+# ไฟล์ที่ไม่จำเป็น
+.vscode/
+README.md
+picture/
+output/
+auth_test.py
+Dockerfile-example
+install.txt
+*.log
+.env
+
+# ตัว Dockerfile เอง
+Dockerfile
