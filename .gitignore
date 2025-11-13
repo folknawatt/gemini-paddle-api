@@ -10,6 +10,8 @@ main_test.py
 auth_test.py
 .env
 
+Dockerfile-example
+install.txt
 output
 
 # Virtual environments
