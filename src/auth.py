@@ -10,7 +10,7 @@ load_dotenv()
 app = FastAPI()
 
 # Header
-API_KEY_NAME = os.getenv("API_KEY_NAME")
+API_KEY_NAME = os.getenv("EXAMPLE_API_KEY_NAME")
 api_key_header_scheme = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 # EXAMPLE KEYS
