@@ -1,26 +1,14 @@
-# ไฟล์ .dockerignore
+# 1. Ignore ทุกอย่างในโปรเจกต์ก่อน
+*
 
-# Virtual Env
-.venv
+# 2. ยกเลิกการ Ignore (Whitelist) เฉพาะสิ่งที่จำเป็น
+#    ต่อการ Build และ Run แอปพลิเคชัน
+#    หมายเหตุ: เราต้องการไฟล์ dependency ก่อน
+#    เพื่อใช้ประโยชน์จาก Docker Layer Caching
+!pyproject.toml
+!requirements.txt
+!uv.lock
 
-# Git
-.git
-.gitignore
-
-# Python cache
-__pycache__/
-*.pyc
-
-# ไฟล์ที่ไม่จำเป็น
-.vscode/
-README.md
-picture/
-output/
-auth_test.py
-Dockerfile-example
-install.txt
-*.log
-.env
-
-# ตัว Dockerfile เอง
-Dockerfile
+# 3. ยกเลิกการ Ignore โฟลเดอร์ซอร์สโค้ดหลัก
+#    (เช่นโค้ดอยู่ในโฟลเดอร์ 'src')
+!src/

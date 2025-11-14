@@ -1,10 +1,20 @@
-# 1. Base Image
-FROM python:3.13
+# Stage 1: Build Stage
+ARG PYTHON_BASE=3.13-slim
+FROM python:${PYTHON_BASE} AS builder
 
-# 2. Working Directory
-WORKDIR /wrk/app
+# ป้องกันการสร้าง .pyc files และบังคับให้ output ไม่ถูก buffer
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-RUN apt-get update && apt-get install -y \
+WORKDIR /build
+
+# ติดตั้ง uv ด้วย pip แบบไม่เก็บ cache
+RUN pip install --no-cache-dir uv
+
+# ติดตั้ง build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     zlib1g-dev \
     libncurses5-dev \
@@ -16,32 +26,48 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     libbz2-dev \
     liblzma-dev \
-    lzma \ 
     wget \
     libgl1 \
-    # python3-opencv \
-    && apt-get clean
+    && rm -rf /var/lib/apt/lists/*
 
-# 3. คัดลอกไฟล์ Dependencies
-COPY pyproject.toml .
-RUN pip install --no-cache-dir .
-# COPY requirements.txt .
-# RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. คัดลอกโค้ดโปรเจกต์
-# คัดลอกไฟล์ที่เหลือทั้งหมด (. ในที่นี้หมายถึง FOLDER ปัจจุบัน) เข้าไปใน /wrk/app
-COPY . /wrk/app
+# Copy เฉพาะไฟล์ dependencies ก่อน
+COPY pyproject.toml uv.lock ./
 
+# ติดตั้ง dependencies ไปที่ virtual environment เพื่อแยกจาก system packages
+RUN uv venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    uv pip install --no-cache .
 
 #---------------------------------------------------------------------------------------------
-WORKDIR /wrk/app/src
+# Stage 2: Runtime Stage
+FROM python:${PYTHON_BASE}
 
-# # 5. บอก Docker ว่าแอปฯ ของเราจะรันที่ Port ไหน
+# ติดตั้ง runtime dependencies เท่านั้น (ไม่ใช่ build tools)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
-# # 6. คำสั่งที่ใช้รันแอปฯ
-# # นี่คือคำสั่งเดียวกับที่คุณรัน uvicorn ปกติ
-# # "main:app" คือ: ให้รันตัวแปร "app" ที่อยู่ในไฟล์ "main.py"
-# # "--host 0.0.0.0" คือ: อนุญาตให้ traffic จากภายนอก container เข้ามาได้ (สำคัญมาก!)
-# # "--port 8000" คือ: รันที่ port 8000
+
+WORKDIR /app
+
+# Copy virtual environment จาก builder stage
+COPY --from=builder /opt/venv /opt/venv
+
+# Copy src (Source Code folder)
+COPY . .
+
+# ตั้งค่า PATH ให้ใช้ virtual environment
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+
+WORKDIR /app/src
+
+# Expose port (เป็น metadata สำหรับ documentation)
+EXPOSE 8000
+
+# ใช้ uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-

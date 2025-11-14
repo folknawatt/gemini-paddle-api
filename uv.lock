@@ -291,6 +291,7 @@ dependencies = [
     { name = "paddleocr" },
     { name = "paddlepaddle" },
     { name = "python-dotenv" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
@@ -300,6 +301,7 @@ requires-dist = [
     { name = "paddleocr", specifier = ">=3.3.1" },
     { name = "paddlepaddle", specifier = ">=3.2.1" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "uvicorn", specifier = ">=0.38.0" },
 ]
 
 [[package]]
